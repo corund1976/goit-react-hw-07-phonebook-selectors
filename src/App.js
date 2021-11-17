@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { useDispatch } from "react-redux";
 
 import './App.css';
 import Container from './components/Container';
@@ -10,10 +9,12 @@ import Filter from './components/Filter';
 import ContactList from './components/ContactList';
 import { fetchContacts } from './redux/phonebook/operations';
 
-function App({ fetchContactsToApp }) {
+function App() {
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    fetchContactsToApp();
-  }, [fetchContactsToApp]);
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   return (
     <Container>
@@ -31,12 +32,4 @@ function App({ fetchContactsToApp }) {
   );
 };
 
-const mapDispatchToProps = dispatch => ({
-  fetchContactsToApp: () => dispatch(fetchContacts())
-})
-
-export default connect(null, mapDispatchToProps)(App);
-
-App.propTypes = {
-  fetchContactsToApp: PropTypes.func.isRequired,
-};
+export default App;

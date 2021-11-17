@@ -1,20 +1,25 @@
 import { useState } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from "react-redux";
 
 import s from './ContactForm.module.css';
 import { addContact } from '../../redux/phonebook/operations';
+import { getItems } from "../../redux/phonebook/selectors";
 
-function ContactForm({ contactsToContactForm, onSubmitForm }) {
+function ContactForm() {
   const [name,setName] = useState('');
-  const [number,setNumber] = useState('');
+  const [number, setNumber] = useState('');
+  
+  const contactsToContactForm = useSelector(getItems);
+  const dispatch = useDispatch();
 
   const handleChange = e => {
     const { name, value } = e.currentTarget;
     switch (name) {
-      case 'name': setName(value);
+      case 'name':
+        setName(value);
         break;
-      case 'number': setNumber(value);
+      case 'number':
+        setNumber(value);
         break;
       default:
         return;
@@ -25,11 +30,13 @@ function ContactForm({ contactsToContactForm, onSubmitForm }) {
     e.preventDefault();
     // Проверка на повторный ввод существующего контакта
     const normalizedName = name.toLowerCase();
-    contactsToContactForm.some(contact => contact.name.toLowerCase() === normalizedName)
+    contactsToContactForm.some(contact =>
+      contact.name.toLowerCase() === normalizedName ||
+      contact.number === number)
       ?
         alert(`${name} is already in contacts.`)
       : 
-        onSubmitForm({ name, number });
+        dispatch(addContact({ name, number }));
     resetLocalState();
   };
 
@@ -77,22 +84,4 @@ function ContactForm({ contactsToContactForm, onSubmitForm }) {
   );
 };
 
-const mapStateToProps = state => {
-  return {
-    contactsToContactForm: state.contacts.items,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    onSubmitForm: ({ name, number }) => dispatch(addContact({ name, number })),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);
-
-ContactForm.propTypes = {
-  contactsToContactForm: PropTypes.arrayOf(
-    PropTypes.shape()).isRequired,
-  onSubmitForm: PropTypes.func.isRequired,
-};
+export default ContactForm;

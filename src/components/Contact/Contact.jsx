@@ -1,10 +1,13 @@
-import { connect } from 'react-redux';
+import { useDispatch } from "react-redux";
 import PropTypes from 'prop-types';
 
 import s from './Contact.module.css';
 import { deleteContact } from '../../redux/phonebook/operations';
 
-function Contact({ name, number, id, onDeleteContact }) { 
+function Contact({ name, number, id }) {
+  const dispatch = useDispatch();
+  const onDeleteContact = id => dispatch(deleteContact(id));
+
   return (
     <>
       <p className={s.contact}>• {name}: {number}</p>
@@ -15,17 +18,10 @@ function Contact({ name, number, id, onDeleteContact }) {
   );
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    onDeleteContact: id => dispatch(deleteContact(id)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(Contact);
+export default Contact;
 
 Contact.propTypes = {
   name: PropTypes.string.isRequired,
   number: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
-  onDeleteContact: PropTypes.func.isRequired,
 };

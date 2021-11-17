@@ -1,10 +1,12 @@
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { useSelector } from "react-redux";
 
 import s from './ContactList.module.css';
 import Contact from '../Contact';
+import { visibleContacts } from "../../redux/phonebook/selectors";
 
-function ContactList({ contactsToContactList }) {
+function ContactList() {
+  const contactsToContactList = useSelector(visibleContacts);
+
   return (
     <ul className={s.contactList}>
       {contactsToContactList.map(({ id, name, number }) => {
@@ -22,22 +24,4 @@ function ContactList({ contactsToContactList }) {
   );
 };
 
-const getVisibleContacts = (items, filter) => {
-    const normalizedFilter = filter.trim().toLowerCase();
-
-    return items.filter(item =>
-      item.name.toLowerCase().includes(normalizedFilter) ||
-      item.number.includes(filter.trim())
-    );
-  };
-
-const mapStateToProps = ({ contacts: { items, filter } }) => ({
-  contactsToContactList: getVisibleContacts(items, filter),
-});
-
-export default connect(mapStateToProps)(ContactList);
-
-ContactList.propTypes = {
-  contactsToContactList: PropTypes.arrayOf(
-    PropTypes.shape()).isRequired,
-};
+export default ContactList;
